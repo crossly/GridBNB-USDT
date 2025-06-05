@@ -1,0 +1,91 @@
+# GridTrading Pro Configuration File
+
+# Trading Configuration
+trading:
+  mode: "spot"  # "spot" or "futures"
+  symbol: "BNB/USDT"
+  leverage: 1  # Only effective in futures mode (1-125)
+  testnet: false
+  
+  # Order settings
+  min_trade_amount: 20.0  # Minimum trade amount in USDT
+  order_timeout: 30  # Order timeout in seconds
+  min_trade_interval: 30  # Minimum interval between trades in seconds
+
+# Grid Trading Parameters
+grid:
+  initial_size: 2.0  # Initial grid size percentage
+  min_size: 1.0      # Minimum grid size percentage
+  max_size: 4.0      # Maximum grid size percentage
+  dynamic_adjustment: true
+  
+  # Volatility-based grid adjustment
+  volatility_thresholds:
+    - range: [0, 0.20]
+      grid_size: 1.0
+    - range: [0.20, 0.40]
+      grid_size: 1.5
+    - range: [0.40, 0.60]
+      grid_size: 2.0
+    - range: [0.60, 0.80]
+      grid_size: 2.5
+    - range: [0.80, 1.00]
+      grid_size: 3.0
+    - range: [1.00, 1.20]
+      grid_size: 3.5
+    - range: [1.20, 999]
+      grid_size: 4.0
+
+# Risk Management
+risk:
+  max_drawdown: -0.15        # Maximum drawdown limit (-15%)
+  daily_loss_limit: -0.05    # Daily loss limit (-5%)
+  max_position_ratio: 0.9    # Maximum position ratio (90%)
+  min_position_ratio: 0.1    # Minimum position ratio (10%)
+  risk_check_interval: 300   # Risk check interval in seconds
+
+# S1 Strategy Configuration
+s1_strategy:
+  enabled: true
+  lookback_days: 52          # Lookback period for high/low calculation
+  sell_target_percent: 0.50  # Target position when price breaks high (50%)
+  buy_target_percent: 0.70   # Target position when price breaks low (70%)
+
+# Notification Settings
+notifications:
+  telegram:
+    enabled: true
+    bot_token: "${TELEGRAM_BOT_TOKEN}"
+    chat_id: "${TELEGRAM_CHAT_ID}"
+    notification_levels:
+      - "trade"      # Trade execution notifications
+      - "risk"       # Risk management alerts
+      - "system"     # System status updates
+      - "error"      # Error notifications
+
+# Web Interface
+web:
+  enabled: true
+  host: "0.0.0.0"
+  port: 58181
+  auto_refresh_interval: 2000  # Auto refresh interval in milliseconds
+
+# Logging Configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  file_rotation: "midnight"
+  backup_count: 7
+  format: "%(asctime)s [%(name)s] %(levelname)s: %(message)s"
+
+# Data Persistence
+data:
+  save_interval: 60          # Save state every 60 seconds
+  backup_count: 10           # Keep 10 backup files
+  history_limit: 1000        # Maximum trade history records
+
+# Exchange API Settings
+api:
+  timeout: 30000             # API timeout in milliseconds
+  recv_window: 5000          # Receive window in milliseconds
+  rate_limit: true           # Enable rate limiting
+  max_retries: 3             # Maximum retry attempts

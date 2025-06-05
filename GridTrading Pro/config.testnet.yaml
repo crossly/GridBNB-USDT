@@ -1,0 +1,95 @@
+# GridTrading Pro Testnet Configuration
+# Optimized for BTC/USDT Futures Trading with 50x Leverage
+
+# Trading Configuration
+trading:
+  mode: "futures"           # Use USDT-M Futures
+  symbol: "BTC/USDT"        # Bitcoin USDT perpetual contract
+  leverage: 50              # 50x leverage (high risk!)
+  testnet: true             # Enable testnet environment
+
+  # Order settings
+  min_trade_amount: 1000.0      # Minimum trade amount in USDT (testnet)
+  order_timeout: 30         # Order timeout in seconds
+  min_trade_interval: 10    # Minimum interval between trades (faster for testing)
+
+# Initial Settings
+initial_base_price: 0  # Use current market price as base price
+
+# Grid Trading Parameters (Adjusted for BTC volatility)
+grid:
+  initial_size: 0.5         # Start with smaller grid for BTC (0.5%)
+  min_size: 0.2             # Minimum grid size (0.2%)
+  max_size: 2.0             # Maximum grid size (2.0%)
+  dynamic_adjustment: true
+  
+  # Volatility-based grid adjustment for BTC
+  volatility_thresholds:
+    - range: [0, 0.10]      # Very low volatility
+      grid_size: 0.2
+    - range: [0.10, 0.20]   # Low volatility
+      grid_size: 0.3
+    - range: [0.20, 0.30]   # Medium volatility
+      grid_size: 0.5
+    - range: [0.30, 0.50]   # High volatility
+      grid_size: 0.8
+    - range: [0.50, 0.80]   # Very high volatility
+      grid_size: 1.2
+    - range: [0.80, 1.20]   # Extreme volatility
+      grid_size: 1.5
+    - range: [1.20, 999]    # Ultra high volatility
+      grid_size: 2.0
+
+# Risk Management (Conservative for high leverage)
+risk:
+  max_drawdown: -0.10       # Maximum drawdown limit (-10% for high leverage)
+  daily_loss_limit: -0.05   # Daily loss limit (-5%)
+  max_position_ratio: 0.8   # Maximum position ratio (80% for safety)
+  min_position_ratio: 0.1   # Minimum position ratio (10%)
+  risk_check_interval: 60   # Check every minute for high leverage
+
+# S1 Strategy Configuration (Disabled for initial testing)
+s1_strategy:
+  enabled: false            # Disable S1 for initial grid testing
+  lookback_days: 30         # Shorter lookback for testing
+  sell_target_percent: 0.40 # More conservative for high leverage
+  buy_target_percent: 0.60  # More conservative for high leverage
+
+# Notification Settings
+notifications:
+  telegram:
+    enabled: false          # Disable for initial testing
+    bot_token: "${TELEGRAM_BOT_TOKEN}"
+    chat_id: "${TELEGRAM_CHAT_ID}"
+    notification_levels:
+      - "trade"             # All trade notifications
+      - "risk"              # Risk alerts (important for high leverage)
+      - "system"            # System status
+      - "error"             # Error notifications
+
+# Web Interface
+web:
+  enabled: true
+  host: "0.0.0.0"
+  port: 58181
+  auto_refresh_interval: 1000  # Faster refresh for testing (1 second)
+
+# Logging Configuration (More verbose for testing)
+logging:
+  level: "DEBUG"            # Debug level for testing
+  file_rotation: "midnight"
+  backup_count: 7
+  format: "%(asctime)s [%(name)s] %(levelname)s: %(message)s"
+
+# Data Persistence
+data:
+  save_interval: 30         # Save state every 30 seconds (faster for testing)
+  backup_count: 20          # Keep more backups for testing
+  history_limit: 2000       # More history for analysis
+
+# Exchange API Settings
+api:
+  timeout: 30000            # 30 second timeout
+  recv_window: 5000         # 5 second receive window
+  rate_limit: true          # Enable rate limiting
+  max_retries: 5            # More retries for testnet stability
